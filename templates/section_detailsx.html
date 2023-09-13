@@ -1,0 +1,112 @@
+{% extends 'admin_base.html' %}
+
+{% block head %}
+    <title>Section details</title>
+    <style>
+         .custom-card {
+            width: calc(33.33% - 16px); /* Adjust the width as needed */
+            margin: 8px;
+    }
+    </style>
+{% endblock %}
+
+<!-- body starts here  -->
+{% block body %}
+
+    <div class="container py-4">
+        <div class="flex">
+            <div class="row d-flex justify-content-between">
+                <div class="col">
+                    <h2 >{{ section.name}}</h2>
+                </div>
+                <div class="col">
+                    <ul class="nav justify-content-end">
+                        <li class="nav-item">
+                          <a class="nav-link active" aria-current="page" href="/add_product/{{ section.id }}"> Add New Product</a>
+                        </li>
+                        <li class="nav-item">
+                          <a class="nav-link" href="/low_stock">Low Stock Items</a>
+                        </li>
+                        
+                    </ul>
+                </div>
+                <div class="col">
+                    <form class="d-flex" role="search" method="POST" action="/admin_search">
+                        <input class="form-control me-2" type="search" name="search_query" placeholder="Search" aria-label="Search" required>
+                        <button class="btn btn-outline-success btn-info" type="submit">Search</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="row mt-4">
+        <div class="col-md-12">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                <div class="alert alert-{{ category }}" role="alert">
+                    {{ message }}
+                </div>
+                {% endfor %}
+            {% endif %}
+            {% endwith %}
+            <div class="row">
+    <!-- card for product  -->
+    
+
+            {% if products | length < 1 %}
+                <h4> No product in this category </h4>
+            {% else %}
+
+            <div class="row">
+                {% for prod in products %}
+                <div class="col-md-4 border border-5 m-2 custom-card">
+                    <div class="card p-2 m-2">
+                        <img src="{{ url_for('static', filename=prod.image_url) if prod.image_url else 'https://placehold.co/320x150' }}" class="card-img-top" alt="{{ prod.name }}" style="max-width: 100%; height: 150px;">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ prod.name }}</h5>
+                            <hr class="my-2">
+                            <p class="mb-1"><strong>Brand:</strong> {{ prod.brand }}</p>
+                            <p class="mb-1"><strong>Manufacturing Date:</strong> {{ prod.manufacturing_date }}</p>
+                            <p class="mb-1"><strong>Expiration Date:</strong> {{ prod.expiry_date }}</p>
+                            <p class="mb-0"><strong>Price:</strong> {{ prod.price }}</p>
+                            <p class="mb-0"><strong>Stock:</strong> {{ prod.stock }}</p>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="button" class="btn btn-primary"><a href="/update_product/{{ prod.id }}" style="color: white; text-decoration: none;">Update</a></button>
+                            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteConfirmationModal{{ prod.id }}">Delete</button>
+                        </div>
+                    </div>
+                </div>
+
+                
+                <div class="modal" id="deleteConfirmationModal{{ prod.id }}" tabindex="-1">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Confirm Deletion</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <p>Are you sure you want to delete?</p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                <a class="btn btn-danger" href="/delete_product/{{prod.id}}">Delete</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            
+            
+            
+            {% endif %}
+
+            <!-- Add more categories here -->
+            </div>
+        </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,165 @@
+{% extends 'admin_base.html' %}
+
+{% block head %}
+    <title>Admin search</title>
+    <style>
+        .search_input{
+            display: none;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<div class="container">
+    
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <nav class="navbar navbar-expand-lg bg-body-tertiary">
+                <div class="container-fluid">
+                  <h2>
+                    
+                  </h2>
+                  <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                  </button>
+                  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">                      
+                        <li class="nav-item ml-4 ps-5">
+                            <!-- <a class="nav-link active" aria-current="page" href="/new_section"></a> -->
+                            {% with messages = get_flashed_messages(with_categories=true) %}
+                                {% if messages %}
+                                    {% for category, message in messages %}
+                                        <div class="alert alert-{{ category }}" role="alert">
+                                            {{ message }}
+                                        </div>
+                                    {% endfor %}
+                                {% endif %}
+                            {% endwith %}
+                        </li>
+                    </ul>
+                    <form action="/admin_search" method="POST" class="d-flex" role="search" id="search_form">
+                        <select name="search_criteria" class="px-3 mx-3" id="search_criteria">
+                            <option value="product_name" selected>Product Name</option>
+                            <option value="stock">Stock</option>
+                            <option value="expire_before">Expire before</option>
+                        </select>
+                        <input type="text" name="product_name_input" class="search_input" id="product_name_input" placeholder="Enter Product Name" style="display: block;"  required>
+                        <input type="date" name="expire_before_input" class="search_input" id="expire_before_input">
+                        <select name="stock_input" class="search_input"  id="stock_input">
+                            <option value="100plus">More than 100</option>
+                            <option value="100minus">Less than 100</option>
+                            <option value="10minus">Less than 10</option>
+                            <option value="out_of_stock">Out of Stock</option>
+                        </select>
+                        <button class="btn btn-outline-success px-2 mx-2" type="submit">Search</button>
+                    </form>
+                  </div>
+                </div>
+            </nav>
+
+            <div class="row">
+                {% if products | length < 1 %}
+                    <h4>Nothing to show</h4>
+                {% else %}
+                    <div class="row row-cols-1 row-cols-md-3 g-4">
+                        {% for prod in products %}
+                            <div class="col">
+                                <div class="card h-100 border shadow-sm">
+                                    <img src="{{ url_for('static', filename=prod.image_url) if prod.image_url else 'https://placehold.co/200' }}" class="card-img-top" alt="{{ prod.name }}" style="object-fit: cover; height: 200px;">
+                                    <div class="card-body">
+                                        <h5 class="card-title">{{ prod.name }}</h5>
+                                        <p class="card-text">
+                                            <strong>Brand:</strong> {{ prod.brand }}<br>
+                                            <strong>Manufacturing Date:</strong> {{ prod.manufacturing_date }}<br>
+                                            <strong>Expiration Date:</strong> {{ prod.expiry_date }}<br>
+                                            <strong>Price:</strong> {{ prod.price }}<br>
+                                            <strong>Stock:</strong> {{ prod.stock }}
+                                        </p>
+                                    </div>
+                                    <div class="card-footer d-flex justify-content-between">
+                                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteConfirmationModal{{ prod.id }}">Delete</button>
+                                        <button type="button" class="btn btn-primary"><a href="/update_product/{{ prod.id }}" style="color: white; text-decoration: none;">Update</a></button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal" id="deleteConfirmationModal{{ prod.id }}" tabindex="-1">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">Confirm Deletion</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p>Are you sure you want to delete?</p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                            <a class="btn btn-danger" href="/delete_product/{{prod.id}}">Delete</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add a JavaScript function to handle the deletion -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Update input fields based on the selected search criteria
+        document.getElementById('search_criteria').addEventListener('change', function () {
+            var product_name_input = document.getElementById('product_name_input');
+            var stock_input = document.getElementById('stock_input');
+            var expire_before_input = document.getElementById('expire_before_input');
+
+            product_name_input.style.display = 'none';
+            stock_input.style.display = 'none';
+            expire_before_input.style.display = 'none';
+
+            if (this.value === 'product_name') {
+                product_name_input.style.display = 'block';
+                product_name_input.setAttribute('required', 'required');
+                stock_input.removeAttribute('required');
+                expire_before_input.removeAttribute('required');
+
+            } else if (this.value === 'stock') {
+                stock_input.style.display = 'block';
+                stock_input.setAttribute('required', 'required');
+                expire_before_input.removeAttribute('required');
+                product_name_input.removeAttribute('required');
+
+            } else if (this.value === 'expire_before') {
+                expire_before_input.style.display = 'block';
+                expire_before_input.setAttribute('required', 'required');
+                product_name_input.removeAttribute('required');
+                stock_input.removeAttribute('required');
+            } 
+        });
+
+        document.getElementById('search_form').addEventListener('submit', function (e) {
+            var search_criteria = document.getElementById('search_criteria').value;
+            var product_name_input = document.getElementById('product_name_input');
+            var stock_input = document.getElementById('stock_input');
+            var expire_before_input = document.getElementById('expire_before_input');
+
+            if (search_criteria !== 'product_name') {
+                product_name_input.removeAttribute('required');
+                product_name_input.disabled = true;
+            }
+            if (search_criteria !== 'stock') {
+                stock_input.removeAttribute('required')
+                stock_input.disabled = true;
+            }
+            if (search_criteria !== 'expire_before') {
+                expire_before_input.removeAttribute('required')
+                expire_before_input.disabled = true;
+            }
+        });
+    });
+</script>
+
+{% endblock %}

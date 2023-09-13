@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <style>
+        .search_input{
+          display: none;
+          width: 150px;
+        }
+        .custom-login{
+            color: black;
+        }
+        .custom-login:hover{
+            color: #fff;
+        }
+        .custom_btn:hover{
+            background-color: #487200;
+            color: #fff;
+        }
+        .card-title {
+            font-size: 1.25rem; 
+            font-weight: bold;
+            color: #333333;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+            padding: 4px 8px;
+      }
+    </style>
+
+    {% block head %}  {% endblock %}
+
+</head>
+<body style="background-color:#e0ca5b ;">
+    <header class="text-white py-2" style="background-color: #487200;">
+        <div class="container d-flex justify-content-end">
+            <div class="d-flex align-items-end">
+                {% if current_user.is_authenticated %}
+                <a href="/cart_details" class="btn btn-primary btn-sm me-2" id="cartIcon">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="badge bg-danger">{{ cartItems | length }}</span>
+                </a>
+                <div class="dropdown">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        {{ current_user.name }}
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="userDropdown">
+                        <li><a class="dropdown-item" href="{{ url_for('order_history') }}">Orders</a></li>
+                        <li><a class="dropdown-item" href="{{url_for('user_card')}}">Profile</a></li>
+                        <li><a class="dropdown-item" href="{{ url_for('user_logout') }}">Logout</a></li>
+                    </ul>
+                </div>
+                {% else %}
+                <a href="{{ url_for('user_login') }}" class="btn btn-link btn-sm me-2 custom-login">User Login</a>
+                <a href="{{ url_for('admin_login') }}" class="btn btn-link btn-sm custom-login">Admin Login</a>
+                {% endif %}
+            </div>
+        </div>
+        <!-- ===================================navigation=========================== -->
+        <nav class="navbar navbar-expand-lg bg-body-tertiary">
+            <div class="container-fluid">
+              <!-- <a class="navbar-brand" href="#">Navbar</a> -->
+              <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+              </button>
+              <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">                      
+                    <li class="h1 mb-0">
+                        <a href="/" class="text-decoration-none text-white hover-scale-up"> 
+                            <i class="fas fa-home pe-5"></i> 
+                        </a>
+                            Grocery App
+                    </li>                
+                </ul>
+
+                <form action="/search" method="POST" class="d-flex" role="search" id="search_form">
+                    <!-- Search criteria dropdown -->
+                    <!-- <label for="search_criteria">Search Criteria:</label> -->
+                    <select name="search_criteria" class="px-3 mx-2" id="search_criteria">
+                        <option value="product_name" selected>Product Name</option>
+                        <option value="price">Maximum Price</option>
+                        <option value="expire_after">Expire After</option>
+                    </select>
+            
+                    <!-- Input fields for different search criteria -->
+                    <input type="text" name="product_name_input" class="search_input form-control" id="product_name_input" placeholder="Product Name" style="display: block;"  required>
+                    <input type="date" name="expire_after_input" class="search_input form-control" id="expire_after_input">
+                    <input type="number" name="price_input" min="1" class="search_input form-control" id="price_input" placeholder="Maximum Price">
+
+                    <!-- Submit button -->
+                    <button class="btn btn-light px-4 mx-2 custom_btn" type="submit">Search</button>
+                </form>
+              </div>
+            </div>
+        </nav>
+  <!-- ===================================Main============================= -->
+    </header>
+    
+
+
+    {% block body %}
+
+    {% endblock %}
+
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.7/dist/umd/popper.min.js" integrity="sha384-zYPOMqeu1DAVkHiLqWBUTcbYfZ8osu1Nd6Z89ify25QV9guujx43ITvfi12/QExE" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.min.js" integrity="sha384-Y4oOpwW3duJdCWv5ly8SCFYWqFDsfob/3GkgExXKV4idmbt98QcxXYs9UoXAB7BZ" crossorigin="anonymous"></script>
+    <!-- Add a JavaScript function to handle the deletion -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Update input fields based on the selected search criteria
+        document.getElementById('search_criteria').addEventListener('change', function () {
+            var product_name_input = document.getElementById('product_name_input');
+            var price_input = document.getElementById('price_input');
+            var expire_after_input = document.getElementById('expire_after_input');
+  
+            product_name_input.style.display = 'none';
+            price_input.style.display = 'none';
+            expire_after_input.style.display = 'none';
+  
+            if (this.value === 'product_name') {
+                product_name_input.style.display = 'block';
+                product_name_input.setAttribute('required', 'required');
+                price_input.removeAttribute('required');
+                expire_after_input.removeAttribute('required');
+  
+            } else if (this.value === 'price') {
+                price_input.style.display = 'block';
+                price_input.setAttribute('required', 'required');
+                expire_after_input.removeAttribute('required');
+                product_name_input.removeAttribute('required');
+  
+            } else if (this.value === 'expire_after') {
+                expire_after_input.style.display = 'block';
+                expire_after_input.setAttribute('required', 'required');
+                product_name_input.removeAttribute('required');
+                price_input.removeAttribute('required');
+            } 
+        });
+  
+        document.getElementById('search_form').addEventListener('submit', function (e) {
+            var search_criteria = document.getElementById('search_criteria').value;
+            var product_name_input = document.getElementById('product_name_input');
+            var price_input = document.getElementById('price_input');
+            var expire_after_input = document.getElementById('expire_after_input');
+  
+            if (search_criteria !== 'product_name') {
+                product_name_input.removeAttribute('required');
+                product_name_input.disabled = true;
+            }
+            if (search_criteria !== 'price') {
+                price_input.disabled = true;
+            }
+            if (search_criteria !== 'expire_after') {
+                expire_after_input.disabled = true;
+            }
+        });
+    });
+    </script>
+</body>
+</html>

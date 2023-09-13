@@ -1,0 +1,143 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<style>
+    
+    .profile-card {
+      max-width: 600px;
+      min-width: 500px;
+      background-color: #f9f9f9;
+      margin: 20px auto;
+      padding: 20px;
+      border-radius: 5px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .profile-card h2 {
+      font-size: 24px;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+
+    .profile-card img {
+      width: 150px;
+      height: 150px;
+      border-radius: 20% 20% 50% 50%;
+      margin: 0 auto 10px;
+      display: block;
+      border: 5px solid #ccc; /* Add border style */
+    }
+
+    .profile-card table {
+      width: 95%;
+      margin-top: 20px;
+      border-collapse: collapse;
+    }
+
+    .profile-card th, .profile-card td {
+      padding: 8px;
+      border-bottom: 1px solid #ccc;
+    }
+
+    .profile-card th {
+      background-color: #9F2B00;
+      color: #fff;
+      font-weight: bold;
+      
+    }
+    th {
+      width: 185px;
+      text-align: left;
+    }
+
+    .profile-card td {
+      background-color: #F8EDE3;
+    }
+
+    .profile-card .table-wrapper {
+      overflow-x: auto;
+      margin-top: 20px;
+    }
+
+    .profile-card .btn-container {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+    }
+
+    .profile-card .btn {
+      flex: 0 0 auto;
+      padding: 10px;
+      background-color: #4CAF50;
+      color: #ffffff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      text-align: center;
+      text-decoration: none;
+    }
+
+    .profile-card .btn:hover {
+      background-color: #45a049;
+    }
+  </style>
+{% endblock %}
+
+{% block body %}
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div class="alert alert-{{ category }}" role="alert">
+        {{ message }}
+      </div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+<div class="profile-card">
+    <img src="https://placehold.co/400@3x.png" alt="User's Picture">
+    <!-- <i class="bi bi-person-circle"></i> -->
+    <h2>{{user.name}}</h2>
+    <div class="table-wrapper">
+        <table>
+            <tr>
+                <th>UserName</th>
+                <td>{{ user.username}}</td>
+ 
+            </tr>
+            <tr>
+                <th>Email Address</th>
+                <td>{{ user.email }}</td>
+    
+            </tr>
+            <tr>
+                <th>Mobile</th>
+                <td>{{ user.mobile }}</td>
+    
+            </tr>
+            <tr>
+                <th>Address</th>
+                <td>{{ user.address }}</td>
+               
+            </tr>
+            <tr>
+                <th>City   State</th>
+                <td>{{ user.city }}, {{user.state }}</td>
+               
+            </tr>
+            <tr>
+                <th>PIN</th>
+                <td>{{ user.pin }}</td>
+    
+            </tr>
+            
+
+            
+
+        </table>
+    </div>
+    <div class="btn-container">
+        <a href="/update_profile" class="btn">Update Details</a>
+        
+    </div>
+</div>
+{% endblock %}

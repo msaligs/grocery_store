@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block head%}
+    <title> order History </title>
+{% endblock %}
+
+
+
+{% block body %}
+<div class="container">
+    {% if orders | length <1 %}
+        <div class="alert alert-info" role="alert">
+            <p>You have not placed any order,  <a href="/">Order Now</a></p>
+        </div>
+    {% else %}
+    {% for order in orders %}
+    <div class="row">
+        <div class="card">
+            <h5 class="card-header">Order No : {{ loop.index }}</h5>
+            <div class="card-body">
+              <!-- <h5 class="card-title">Special title treatment</h5> -->
+              <p class="card-text">Order date: {{ order.order_date }}.</p>
+              <p class="card-text">Total amount {{ order.total_amount }}.</p>
+              <a href="/order_history_details/{{ order.id }}" class="btn btn-primary">Details</a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    {% endif %}
+</div>
+
+
+{% endblock %}

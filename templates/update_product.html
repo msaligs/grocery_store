@@ -1,0 +1,59 @@
+{% extends 'admin_base.html' %}
+{% block head %}
+    <title>Update Product</title>
+{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card" style="background-color: #c79f67">
+                <div class="card-body">
+                    <h3 class="card-title text-center mb-4">Update Product {{ product.name }}</h3>
+
+                    <form action='/update_product/{{product.id}}' method="POST">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Name</label>
+                            <input type="text" id="name" name="name" class="form-control" value="{{ product.name }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="brand" class="form-label">Brand</label>
+                            <input type="text" id="brand" name="brand" class="form-control" value="{{ product.brand }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="manufacturing_date" class="form-label">Manufacturing Date</label>
+                            <input type="date" id="manufacturing_date" name="manufacturing_date" class="form-control" value="{{ product.manufacturing_date.strftime('%Y-%m-%d') }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="expiry_date" class="form-label">Expiry Date</label>
+                            <input type="date" id="expiry_date" name="expiry_date" class="form-control" value="{{ product.expiry_date.strftime('%Y-%m-%d') }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="price" class="form-label">Price</label>
+                            <input type="number" min="0" step="0.01" id="price" name="price" class="form-control" value="{{ product.price }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="stock" class="form-label">Stock</label>
+                            <input type="number" min="0" id="stock" name="stock" class="form-control" value="{{ product.stock }}" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="section" class="form-label">Section Name</label>
+                            <select id="section" name="section" class="form-select" required>
+                                {% for section in sections %}
+                                    <option value="{{ section.id }}" {% if section.id == product.section_id %} selected {% endif %}>{{ section.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <input type="hidden" name="return_url" value="{{ request.url }}">
+                        <div class="d-grid mb-3">
+                            <button type="submit" class="btn btn-primary">Update Product</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

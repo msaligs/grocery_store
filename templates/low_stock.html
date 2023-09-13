@@ -1,0 +1,49 @@
+{% extends 'admin_base.html' %}
+
+{% block head %}
+    <title>Section details</title>
+{% endblock %}
+
+<!-- body starts here  -->
+{% block body %}
+
+    <div class="container py-4">
+        
+        <div class="row mt-4">
+        <div class="col-md-12">
+            <h2 class="h5">Low Stock Items</h2>
+            <div class="row">
+
+            {% if products | length < 1 %}
+                <h4> Sufficient products are available </h4>
+            {% else %}
+
+                {% for prod in products %}
+                    <div class="col-md-4 border">
+                        <a href="#" class="card mb-3"></a>
+                         <img src="{{ url_for('static', filename=prod.image_url) if prod.image_url else 'https://placehold.co/200' }}" class="card-img-top" alt="{{ prod.name }}" width="200px" height="300px">
+
+                        <div class="card-body">
+                            <h5 class="card-title">{{ prod.name }} </h5>
+                            <h6> Brand : {{ prod.brand }} </h6>
+                            <h6> Manufacturing Date : {{ prod.manufacturing_date }} </h6>
+                            <h6> Expiration Date :{{ prod.expiry_date }} </h6>
+                            <h3> Price : {{ prod.price }} </h3>
+                            <h3> Stock : {{ prod.stock }} </h3>
+
+                        </div>
+                        
+                        <p><a href="/update_product/{{prod.id}}" class="link-warning">Update Product</a></p>
+
+                        <p><a href="/delete_product/{{prod.id}}" class="link-danger">Delete Product</a></p>
+
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <!-- Add more categories here -->
+            </div>
+        </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+
+{% block head%}
+    <title> Cart Details </title>
+{% endblock %}
+
+
+
+{% block body %}
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div class="alert alert-{{ category }}" role="alert">
+        {{ message }}
+      </div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <h3 class="card-title text-center mb-4">Cart Details</h3>
+
+                    {% if products|length > 0 %}
+                        <table class="table table-bordered table-striped text-center">
+                            <thead>
+                                <tr>
+                                    <th>Item</th>
+                                    <th>Quantity</th>
+                                    <th>Price</th>
+                                    <th>Total</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in products %}
+                                    <tr>
+                                        <td>{{ item[0].name }}</td>
+                                        <td>
+                                            <select name="quantity" class="form-control" disabled>
+                                                {% for quantity in range(1, 6) %}
+                                                    <option value="{{ quantity }}" {% if quantity == item[1] %}selected{% endif %}>{{ quantity }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </td>
+                                        <td>{{ item[0].price }}</td>
+                                        <td>
+                                            {{ "%.2f"|format((item[0].price * item[1])|float) }}
+                                           
+                                        </td>
+                                        
+                                        <td><a href="/remove/{{ item[2] }}" class="btn btn-danger btn-sm">Remove</a></td>
+                                    </tr>
+                                {% endfor %}
+                                <tr>
+                                    <td colspan="2"></td>
+                                    <td><strong>Total Amount: </strong></td>
+                                    <td>
+                                        <strong>
+                                            {{ "%.2f"|format(total_amount|float) }}
+                                           
+                                        </strong>
+                                    </td>
+                                    
+                                    <td></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="text-center">
+                            
+                            <a href="/" class="btn btn-secondary">Continue Shopping</a>
+                            <!-- <a href="/place_order" class="btn btn-primary">Place Order</a> -->
+                            <button type="button" class="btn btn-primary px-5" data-bs-toggle="modal" data-bs-target="#deleteConfirmationModal">
+                                Place Order
+                            </button>
+
+                            <!-- model code goes here -->
+                            <!-- Define the modal for each section -->
+                        <div class="modal" id="deleteConfirmationModal" tabindex="-1">
+                            <!-- ... Modal content as in your original code ... -->
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Confirm Address</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                      <p class="mb-0"><strong>Name</strong> : {{ user.name }}</p>
+                                      <p class="mb-0"><strong>Mobile</strong> : {{ user.mobile }}, <strong>Email</strong> : {{ user.email}}</p>
+
+                                      <p class="mb-0"><strong>Address</strong> : {{ user.address }}</p>
+                                      <p class="mb-0"><strong>City</strong> :{{ user.city }}, <strong>State</strong> : {{ user.state }}</p>
+                                      <p class="mb-0"><strong>PIN</strong> :{{ user.pin }}</p><br>
+                                      <p class="text-info"><i>To change the address go to profile and update address.</i></p>
+
+                                    </div>
+                                  
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                        <!-- Use a link with proper URL for the Delete action -->
+                                        
+                                        <a href="/place_order" class="btn btn-primary">Confirm Order</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                            <!-- model codes ends here -->
+                        </div>
+                    {% else %}
+                        <p class="text-center">Your cart is empty.</p>
+                        <a href="/" class="btn btn-secondary">Continue Shopping</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

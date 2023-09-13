@@ -1,0 +1,84 @@
+{% extends 'admin_base.html' %}
+
+{% block head %}
+    <title>Add New Product</title>
+{% endblock %}
+
+{% block body %}
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div class="alert alert-{{ category }}" role="alert">
+        {{ message }}
+      </div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card" style="background-color: #c79f67;">
+                <div class="card-body">
+                    <h3 class="card-title text-center mb-4">Add New Product</h3>
+                    <form method="POST" action="/add_product/{{ section_id }}" class="needs-validation" novalidate>
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Name:</label>
+                            <input type="text" name="name" class="form-control" required>
+                            <div class="invalid-feedback">
+                                Please provide a product name.
+                            </div>
+                        </div>
+                
+                        <div class="mb-3">
+                            <label for="brand" class="form-label">Brand:</label>
+                            <input type="text" name="brand" class="form-control" required>
+                            <div class="invalid-feedback">
+                                Please provide a brand name.
+                            </div>
+                        </div>
+                
+                        <div class="mb-3">
+                            <label for="manufacturing_date" class="form-label">Manufacturing Date:</label>
+                            <input type="date" name="manufacturing_date" class="form-control" required>
+                            <div class="invalid-feedback">
+                                Please select a valid manufacturing date.
+                            </div>
+                        </div>
+                
+                        <div class="mb-3">
+                            <label for="expiry_date" class="form-label">Expiry Date:</label>
+                            <input type="date" name="expiry_date" class="form-control" required>
+                            <div class="invalid-feedback">
+                                Please select a valid expiry date.
+                            </div>
+                        </div>
+                
+                        <div class="mb-3">
+                            <label for="price" class="form-label">Price:</label>
+                            <input type="number" min="0" name="price" class="form-control" required>
+                            <div class="invalid-feedback">
+                                Please provide a valid price.
+                            </div>
+                        </div>
+                
+                        <div class="mb-3">
+                            <label for="stock" class="form-label">Stock:</label>
+                            <input type="number" min="0" name="stock" class="form-control" required>
+                            <div class="invalid-feedback">
+                                Please provide a valid stock quantity.
+                            </div>
+                        </div>
+                
+                        <!-- Add more fields as needed -->
+                
+                        <div class="d-grid mt-4">
+                            <button type="submit" class="btn btn-primary">Add Product</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

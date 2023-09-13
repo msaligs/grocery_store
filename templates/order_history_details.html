@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block head%}
+    <title> error page </title>
+{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <table class="table">
+            <thead>
+              <tr>
+                
+                <th scope="col">Product Name</th>
+                <th scope="col">Brand</th>
+                <th scope="col">mfg date</th>
+                <th scope="col">exp date</th>
+                <th scope="col">Price</th>
+                <th scope="col">Quantity</th>
+              </tr>
+            </thead>
+            <tbody>
+            {% for items in order_items %}
+              <tr>
+                
+                <td>{{ items.prod_name}}</td>
+                <td>{{ items.brand }}</td>
+                <td>{{ items.manufacturing_date }}</td>
+                <td>{{ items.expiry_date }}</td>
+                <td>{{ items.price }}</td>
+                <td>{{ items.quantity }}</td>
+              </tr>
+            {% endfor %}
+            </tbody>
+          </table>
+    </div>
+
+
+{% endblock %}
